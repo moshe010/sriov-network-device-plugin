@@ -334,3 +334,15 @@ func GetDriverName(pciAddr string) (string, error) {
 	}
 	return filepath.Base(driverInfo), nil
 }
+
+// GetPCINuma returns pci
+func GetPCINuma(pciAddr string) int {
+	numaNodeFile := filepath.Join(sysBusPci, pciAddr, "numa_node")
+	numaNode, err := ioutil.ReadFile(numaNodeFile)
+	numaNode = bytes.TrimSpace(numaNode)
+	numa, err := strconv.Atoi(string(numaNode))
+	if err != nil {
+		return -1
+	}
+	return numa
+}

@@ -18,7 +18,7 @@ type pciNetDevice struct {
 	vfID        int
 	linkSpeed   string
 	env         string
-	numa        string
+	numa        int
 	apiDevice   *pluginapi.Device
 	deviceSpecs []*pluginapi.DeviceSpec
 	mounts      []*pluginapi.Mount
@@ -55,9 +55,11 @@ func NewPciNetDevice(pciDevice *ghw.PCIDevice, rFactory types.ResourceFactory) (
 	mnt := infoProvider.GetMounts(pciAddr)
 	env := infoProvider.GetEnvVal(pciAddr)
 	rdmaSpec := rFactory.GetRdmaSpec(pciDevice.Address)
+	numa := utils.GetPCINuma(pciDevice.Address)
 	apiDevice := &pluginapi.Device{
 		ID:     pciAddr,
 		Health: pluginapi.Healthy,
+		Topology: &pluginapi.TopologyInfo{Socket: int64(numa)},
 	}
 
 	// 			4. Create pciNetDevice object with all relevent info
@@ -72,7 +74,7 @@ func NewPciNetDevice(pciDevice *ghw.PCIDevice, rFactory types.ResourceFactory) (
 		deviceSpecs: dSpecs,
 		mounts:      mnt,
 		env:         env,
-		numa:        "", // TO-DO: Get this using utils pkg
+		numa:        numa,
 		rdmaSpec:    rdmaSpec,
 	}, nil
 }
