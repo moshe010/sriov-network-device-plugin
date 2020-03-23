@@ -12,7 +12,7 @@ RUN apk add --update --virtual build-dependencies build-base linux-headers && \
     cd /tmp/ddptool && tar zxvf ddptool-1.0.0.0.tar.gz && make
 
 FROM alpine
-RUN apk add hwdata-pci
+RUN apk add hwids-pci
 COPY --from=builder /usr/src/sriov-network-device-plugin/build/sriovdp /usr/bin/
 COPY --from=builder /tmp/ddptool/ddptool /usr/bin/
 WORKDIR /
